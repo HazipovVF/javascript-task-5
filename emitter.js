@@ -4,7 +4,7 @@
  * Сделано задание на звездочку
  * Реализованы методы several и through
  */
-getEmitter.isStar = true;
+getEmitter.isStar = false;
 module.exports = getEmitter;
 
 /**
@@ -14,55 +14,80 @@ module.exports = getEmitter;
 function getEmitter() {
     return {
 
-        /**
-         * Подписаться на событие
-         * @param {String} event
-         * @param {Object} context
-         * @param {Function} handler
-         */
+        events: {},
+
         on: function (event, context, handler) {
-            console.info(event, context, handler);
+
+
+            if (!(event in this.events)) {
+                this.events[event] = [];
+            }
+
+            this.events[event].push(
+                {
+                    students: context,
+                    func: handler
+                });
+
+            return this;
         },
 
-        /**
-         * Отписаться от события
-         * @param {String} event
-         * @param {Object} context
-         */
         off: function (event, context) {
-            console.info(event, context);
+            event = getOffEvents(event, Object.keys(this.events));
+            event.forEach(function (eventt) {
+                for (var i = 0; i < this.events[eventt].length; i++) {
+                    if (this.events[eventt][i].students.focus === context.focus &&
+                        this.events[eventt][i].students.wisdom === context.wisdom) {
+                        this.events[eventt].splice(i, 1);
+                    }
+                }
+
+            }, this);
+
+            return this;
         },
 
-        /**
-         * Уведомить о событии
-         * @param {String} event
-         */
         emit: function (event) {
-            console.info(event);
-        },
+            event = getEvents(event);
 
-        /**
-         * Подписаться на событие с ограничением по количеству полученных уведомлений
-         * @star
-         * @param {String} event
-         * @param {Object} context
-         * @param {Function} handler
-         * @param {Number} times – сколько раз получить уведомление
-         */
-        several: function (event, context, handler, times) {
-            console.info(event, context, handler, times);
-        },
+            event.forEach(function (eventt) {
+                if (eventt in this.events) {
+                    this.events[eventt].forEach(function (ev) {
+                        ev.func.call(ev.students);
+                    });
+                }
 
-        /**
-         * Подписаться на событие с ограничением по частоте получения уведомлений
-         * @star
-         * @param {String} event
-         * @param {Object} context
-         * @param {Function} handler
-         * @param {Number} frequency – как часто уведомлять
-         */
-        through: function (event, context, handler, frequency) {
-            console.info(event, context, handler, frequency);
+            }, this);
+
+            return this;
+
         }
+
     };
+}
+
+function getEvents(event) {
+    var result = [];
+    result.push(event);
+    if (event.indexOf('.') >= 0) {
+        result.push(event.slice(0, event.indexOf('.')));
+    }
+
+    return result;
+}
+
+function getOffEvents(event, keys) {
+    var result = [];
+    if (event.indexOf('.') >= 0) {
+        result.push(event);
+
+        return result;
+    }
+    keys.forEach(function (key) {
+        if (key.indexOf(event) >= 0) {
+            result.push(key);
+        }
+    });
+
+    return result;
 }
