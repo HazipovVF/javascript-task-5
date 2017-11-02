@@ -37,7 +37,7 @@ function getEmitter() {
             event.forEach(function (eventt) {
                 for (var i = 0; i < this.events[eventt].length; i++) {
                     if (this.events[eventt][i].students.focus === context.focus &&
-                        this.events[eventt][i].students.wisdom === context.wisdom) {
+                            this.events[eventt][i].students.wisdom === context.wisdom) {
                         this.events[eventt].splice(i, 1);
                     }
                 }
@@ -79,7 +79,12 @@ function getEvents(event) {
 function getOffEvents(event, keys) {
     var result = [];
     if (event.indexOf('.') >= 0) {
-        result.push(event);
+        keys.forEach(function (key) {
+            if (key === event) {
+                result.push(event);
+            }
+        });
+
 
         return result;
     }
