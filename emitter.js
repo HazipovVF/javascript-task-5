@@ -33,15 +33,14 @@ function getEmitter() {
         },
 
         off: function (event, context) {
-            event = getOffEvents(event, Object.keys(this.events));
-            event.forEach(function (eventt) {
-                for (var i = 0; i < this.events[eventt].length; i++) {
-                    if (this.events[eventt][i].students.focus === context.focus &&
-                            this.events[eventt][i].students.wisdom === context.wisdom) {
-                        this.events[eventt].splice(i, 1);
-                    }
+            Object.keys(this.events).forEach(function (key) {
+                if (key === event || key.indexOf(event + '.') === 0) {
+                    this.events[key].forEach(function (ev) {
+                        if (ev.students === context) {
+                            this.events[key].splice(this.events[key].indexOf(ev), 1);
+                        }
+                    }, this);
                 }
-
             }, this);
 
             return this;
@@ -81,25 +80,4 @@ function getEvents(event) {
 
     return result;
 
-}
-
-function getOffEvents(event, keys) {
-    var result = [];
-    if (event.indexOf('.') >= 0) {
-        keys.forEach(function (key) {
-            if (key === event) {
-                result.push(event);
-            }
-        });
-
-
-        return result;
-    }
-    keys.forEach(function (key) {
-        if (key.indexOf(event) >= 0 && key !== event + '.') {
-            result.push(key);
-        }
-    });
-
-    return result;
 }
