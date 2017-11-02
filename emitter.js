@@ -68,15 +68,19 @@ function getEmitter() {
 
 function getEvents(event) {
     var result = [];
-    event = (event + '.').split('.');
-
-    if (event[1] !== '') {
-        result.push(event[0] + '.' + event[1]);
+    var ev = event.split('.');
+    if (ev === event) {
+        return result.push(ev);
     }
 
-    result.push(event[0]);
+    while (ev.length !== 0) {
+
+        result.push(ev.join('.'));
+        ev.pop();
+    }
 
     return result;
+
 }
 
 function getOffEvents(event, keys) {
