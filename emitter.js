@@ -92,7 +92,7 @@ function getOffEvents(event, keys) {
         return result;
     }
     keys.forEach(function (key) {
-        if (key.indexOf(event) >= 0) {
+        if (key.indexOf(event) >= 0 && key !== event + '.') {
             result.push(key);
         }
     });
