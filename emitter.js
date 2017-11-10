@@ -18,26 +18,25 @@ function getEmitter() {
 
         on: function (event, context, handler) {
 
-
             if (!(event in this.events)) {
                 this.events[event] = [];
             }
 
-            this.events[event].push(
-                {
-                    students: context,
-                    func: handler
-                });
+            this.events[event].push({
+                students: context,
+                func: handler
+            });
 
             return this;
         },
 
         off: function (event, context) {
             Object.keys(this.events).forEach(function (key) {
+                var fact = this.events[key];
                 if (key === event || key.indexOf(event + '.') === 0) {
-                    this.events[key].forEach(function (ev) {
-                        if (ev.students === context) {
-                            this.events[key].splice(this.events[key].indexOf(ev), 1);
+                    fact.forEach(function (occasion) {
+                        if (occasion.students === context) {
+                            fact.splice(fact.indexOf(occasion), 1);
                         }
                     }, this);
                 }
@@ -47,12 +46,12 @@ function getEmitter() {
         },
 
         emit: function (event) {
-            event = getEvents(event);
+            var eventMassiv = getEvents(event);
 
-            event.forEach(function (eventt) {
-                if (eventt in this.events) {
-                    this.events[eventt].forEach(function (ev) {
-                        ev.func.call(ev.students);
+            eventMassiv.forEach(function (singleEvent) {
+                if (singleEvent in this.events) {
+                    this.events[singleEvent].forEach(function (occasion) {
+                        occasion.func.call(occasion.students);
                     });
                 }
 
@@ -67,15 +66,14 @@ function getEmitter() {
 
 function getEvents(event) {
     var result = [];
-    var ev = event.split('.');
-    if (ev === event) {
-        return result.push(ev);
+    var eventMas = event.split('.');
+    if (eventMas === event) {
+        return result.push(eventMas);
     }
 
-    while (ev.length !== 0) {
-
-        result.push(ev.join('.'));
-        ev.pop();
+    while (eventMas.length !== 0) {
+        result.push(eventMas.join('.'));
+        eventMas.pop();
     }
 
     return result;
